@@ -1,0 +1,3 @@
+
+DROP POLICY "Members can view workspace memberships"
+ON public.workspace_members;

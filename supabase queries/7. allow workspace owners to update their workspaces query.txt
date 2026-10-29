@@ -1,0 +1,11 @@
+
+CREATE POLICY "Owners can update their workspaces"
+ON public.workspaces
+FOR UPDATE
+TO authenticated
+USING (
+    owner_id = (SELECT auth.uid())
+)
+WITH CHECK (
+    owner_id = (SELECT auth.uid())
+);

@@ -1,0 +1,17 @@
+
+DROP POLICY "Owners can add workspace members"
+ON public.workspace_members;
+
+CREATE POLICY "Owners can add regular members"
+ON public.workspace_members
+FOR INSERT
+TO authenticated
+WITH CHECK (
+    role = 'member'
+    AND EXISTS (
+        SELECT 1
+        FROM public.workspaces AS w
+        WHERE w.id = workspace_members.workspace_id
+          AND w.owner_id = (SELECT auth.uid())
+    )
+);

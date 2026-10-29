@@ -1,0 +1,13 @@
+
+CREATE POLICY "Owners can remove workspace members"
+ON public.workspace_members
+FOR DELETE
+TO authenticated
+USING (
+    EXISTS (
+        SELECT 1
+        FROM public.workspaces AS w
+        WHERE w.id = workspace_members.workspace_id
+          AND w.owner_id = (SELECT auth.uid())
+    )
+);

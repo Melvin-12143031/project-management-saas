@@ -1,0 +1,8 @@
+
+CREATE POLICY "Users can create workspaces they own"
+ON public.workspaces
+FOR INSERT
+TO authenticated
+WITH CHECK (
+    owner_id = (SELECT auth.uid())
+);

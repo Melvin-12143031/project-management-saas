@@ -1,0 +1,14 @@
+
+CREATE POLICY "Members can view workspace memberships"
+ON public.workspace_members
+FOR SELECT
+TO authenticated
+USING (
+    EXISTS (
+        SELECT 1
+        FROM public.workspace_members AS my_membership
+        WHERE my_membership.workspace_id =
+              workspace_members.workspace_id
+          AND my_membership.user_id = (SELECT auth.uid())
+    )
+);

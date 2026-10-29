@@ -1,0 +1,40 @@
+
+-- Store additional information for each authenticated user.
+CREATE TABLE public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    full_name TEXT,
+    avatar_url TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Enable Row Level Security.
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- Users can read their own profile.
+CREATE POLICY "Users can view their own profile"
+ON public.profiles
+FOR SELECT
+TO authenticated
+USING ((SELECT auth.uid()) = id);
+
+-- Users can create their own profile.
+CREATE POLICY "Users can create their own profile"
+ON public.profiles
+FOR INSERT
+TO authenticated
+WITH CHECK ((SELECT auth.uid()) = id);
+
+-- Users can update their own profile.
+CREATE POLICY "Users can update their own profile"
+ON public.profiles
+FOR UPDATE
+TO authenticated
+USING ((SELECT auth.uid()) = id)
+WITH CHECK ((SELECT auth.uid()) = id);
+
+-- Grant the authenticated role the necessary table permissions.
+GRANT SELECT, INSERT, UPDATE
+ON public.profiles
+TO authenticated;
+

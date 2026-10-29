@@ -1,0 +1,8 @@
+
+CREATE POLICY "Owners can delete their workspaces"
+ON public.workspaces
+FOR DELETE
+TO authenticated
+USING (
+    owner_id = (SELECT auth.uid())
+);

@@ -1,0 +1,8 @@
+
+CREATE POLICY "Members can view workspace memberships"
+ON public.workspace_members
+FOR SELECT
+TO authenticated
+USING (
+    public.is_workspace_member(workspace_id)
+);
